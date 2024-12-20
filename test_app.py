@@ -31,3 +31,24 @@ def test_add_camera(client):
     response = client.post('/api/addcamera', json={"id": "camera1"})
     assert response.status_code == 400
     assert response.json["message"] == "Camera ID already exists"
+
+# Test deleting a camera
+def test_delete_camera(client):
+    client.post('/api/addcamera', json={"id": "camera2"})
+
+    # Delete existing camera
+    response = client.post('/api/deletecamera', json={"id": "camera2"})
+    assert response.status_code == 200
+    assert response.json == {"status": "Camera deleted", "camera_id": "camera2"}
+
+    # Try deleting a non-existent camera
+    response = client.post('/api/deletecamera', json={"id": "camera3"})
+    assert response.status_code == 404
+    assert response.json["message"] == "Camera ID not found"
+
+# Test getting available cameras
+def test_get_cameras(client):
+    client.post('/api/addcamera', json={"id": "camera4"})
+    response = client.get('/api/getcameras')
+    assert response.status_code == 200
+    assert "camera4" in response.json["available_cameras"]
