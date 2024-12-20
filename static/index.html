@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Image Reload</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: rgb(115, 87, 255);
+        }
+
+        #headertext {
+            font-weight: 800;
+            font-size: 3rem;
+            color: rgba(28, 0, 54, 0.55);
+        }
+
+        #cameraId {
+            background-color:rgb(109, 41, 255);
+            color: rgba(0, 0, 0, 0.5);
+            display: block;
+            text-align: center;
+            margin: 2rem auto;
+            padding: 0.5rem 0;
+            border: none;
+            border-radius: 25px;
+            font-size: 2rem;
+            outline: 2px rgba(0, 0, 0, 0.3) solid;
+        }
+        #cameraId:focus {
+            outline: 2px rgba(0, 0, 0, 0.6) solid;
+        }
+        #cameraId::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .wrapper {
+            padding-bottom: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .cameraCard {
+            display: inline-block;
+            border: 0px solid rgba(0, 0, 0, 0.45);
+            padding: 0px;
+            border-radius: 15px;
+            width: calc(49% - 10px);
+            min-width: calc(49% - 10px);
+            min-height: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0);
+            margin-inline: 10px;
+        }
+
+            .cameraCard .cameraImage {
+                height: auto;
+                width: 100%;
+                min-width: calc(49% - 10px);
+                min-height: 100%;
+                border-radius: 15px;
+            }
+
+            .cameraCard span {
+                float: left;
+                margin: 0;
+                position: relative;
+                top: 40px;
+                left: 10px;
+                font-size: 1.5rem;
+                font-weight: 900;
+                color: rgba(255, 255, 255, 0.8);
+                text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.8);
+            }
+
+        .controls {
+            height: auto;
+            width: 32px;
+            cursor: pointer;
+            margin-inline: 5px;
+            float: right;
+            position: relative;
+            top: 40px;
+            right: 5px;
+        }
+
+        #addCamera {
+            height: auto;
+            width: 6rem;
+            cursor: pointer;
+            opacity: 85%;
+        }
+
+        #loadCameras {
+            cursor: pointer;
+            height: auto;
+            width: 5rem;
+            position: absolute;
+            right: 3rem;
+            top: 3rem;
+            opacity: 90%;
+        }
+    </style>
+</head>
+<body>
+    <p id="headertext">Live Camera Feed</p>
+
+</body>
+</html>
