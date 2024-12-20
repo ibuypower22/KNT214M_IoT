@@ -52,3 +52,52 @@ def test_get_cameras(client):
     response = client.get('/api/getcameras')
     assert response.status_code == 200
     assert "camera4" in response.json["available_cameras"]
+
+# Test adding an image
+def test_add_image(client):
+    client.post('/api/addcamera', json={"id": "camera5"})
+    image_path = os.path.join(os.getcwd(), "test_image.jpg")
+    
+    # Create a test image
+    with open(image_path, "wb") as f:
+        f.write(b"\xff\xd8\xff")  # Minimal JPEG header for testing
+    
+    # Upload the image
+    with open(image_path, "rb") as f:
+        response = client.post('/api/addimage/camera5', data={"image": (f, "test_image.jpg")})
+    assert response.status_code == 200
+    
+    # Cleanup test image
+    os.remove(image_path)
+
+    # Test adding an image for a non-existent camera
+    response = client.post('/api/addimage/camera6', data={"image": (b"image_data", "test_image.jpg")})
+    assert response.status_code == 404
+    assert response.json["message"] == "Camera ID not recognized"
+
+# Test getting an image
+def test_get_image(client):
+    client.post('/api/addcamera', json={"id": "camera7"})
+    image_path = os.path.join(os.getcwd(), "test_image.jpg")
+    
+    # Create a test image
+    with open(image_path, "wb") as f:
+        f.write(b"\xdd")  # Some data for testing
+
+    # Upload the image
+    with open(image_path, "rb") as f:
+        client.post('/api/addimage/camera7', data={"image": (f, "test_image.jpg")})
+
+    # Get the image
+    response = client.get('/api/getimage/camera7')
+    assert response.status_code == 200
+    assert response.data == b"\xdd"  # Check the data we wrote
+
+
+    # Cleanup test image
+    os.remove(image_path)
+
+    # Test getting an image for a non-existent camera
+    response = client.get('/api/getimage/camera8')
+    assert response.status_code == 404
+    assert response.json["message"] == "Camera ID not recognized"
