@@ -117,7 +117,174 @@
     <img id="loadCameras" src="https://cdn-icons-png.flaticon.com/512/892/892303.png" alt="Load cameras from servers" title="Load cameras" onclick="loadCameras()"></img>
 
     <div id="cameraWrapper"></div>
+  <script>
+        let reloadInterval;
+        let cameraIds = [];
 
+        function loadCameras() {
+            apiGetCameras(function() {
+                showCameraCards(cameraIds);
+            });
+        }
+
+        function startReload(imgElement, cameraName, buttonElement) {
+            if (buttonElement.isReloading) {
+                clearInterval(buttonElement.reloadInterval);
+                buttonElement.src = 'https://cdn-icons-png.flaticon.com/512/16104/16104951.png';
+                buttonElement.alt = 'Reload';
+                buttonElement.title = 'Reload camera';
+                buttonElement.isReloading = false;
+                imgElement.src = 'https://www.solidbackgrounds.com/images/1280x720/1280x720-royal-blue-traditional-solid-color-background.jpg';
+            } else {
+                buttonElement.src = 'https://cdn-icons-png.flaticon.com/512/14025/14025540.png';
+                buttonElement.alt = 'Stop';
+                buttonElement.title = 'Stop camera';
+
+                buttonElement.reloadInterval = setInterval(() => {
+                    const imageUrl = `/api/getimage/${cameraName}?t=` + new Date().getTime();
+                    fetch(imageUrl)
+                        .then(response => {
+                            if (response.ok) {
+                                imgElement.src = imageUrl;
+                            } else {
+                                imgElement.src = 'https://i.ytimg.com/vi/_Yvt99hHCxM/maxresdefault.jpg';
+                            }
+                        })
+                        .catch(() => {
+                            imgElement.src = 'https://i.ytimg.com/vi/_Yvt99hHCxM/maxresdefault.jpg';
+                        });
+                }, 500);
+                buttonElement.isReloading = true;
+            }
+        }
+
+        function showCameraCards(cameraIds) {
+            cameraWrapper.innerHTML = '';
+            cameraIds.forEach(function(camName) {
+                const cameraCard = document.createElement('div');
+                cameraCard.className = 'cameraCard';
+
+                const cameraName = document.createElement('span');
+                cameraName.textContent = camName;
+
+                const cameraImage = document.createElement('img');
+                cameraImage.src = 'https://www.solidbackgrounds.com/images/1280x720/1280x720-royal-blue-traditional-solid-color-background.jpg';
+                cameraImage.alt = 'Camera Output';
+                cameraImage.className = 'cameraImage';
+
+                const cameraReloadButton = document.createElement('img');
+                cameraReloadButton.src = 'https://cdn-icons-png.flaticon.com/512/16104/16104951.png';
+                cameraReloadButton.alt = 'Reload';
+                cameraReloadButton.title = 'Reload camera';
+                cameraReloadButton.isReloading = false;
+                cameraReloadButton.className = 'controls';
+                cameraReloadButton.onclick = function () {
+                    startReload(cameraImage, camName, cameraReloadButton);
+                };
+
+                const cameraDeleteButton = document.createElement('img');
+                cameraDeleteButton.src = 'https://cdn-icons-png.flaticon.com/512/1828/1828843.png';
+                cameraDeleteButton.alt = 'Delete';
+                cameraDeleteButton.title = 'Delete camera';
+                cameraDeleteButton.className = 'controls';
+                cameraDeleteButton.onclick = function () {
+                    cameraCard.remove();
+                    apiDeleteCamera(camName);
+                };
+
+                cameraCard.appendChild(cameraName);
+                cameraCard.appendChild(cameraDeleteButton);
+                cameraCard.appendChild(cameraReloadButton);
+                cameraCard.appendChild(cameraImage);
+
+                const cameraWrapper = document.getElementById('cameraWrapper');
+                cameraWrapper.appendChild(cameraCard);
+            });
+        }
+
+        function addCamera() {
+            const camName = $('#cameraId').val().trim();
+
+            if (camName === '') {
+                alert('Camera ID cannot be empty!');
+                return;
+            }
+            
+            apiGetCameras(function() {
+            
+                if (!cameraIds.includes(camName)) {
+                    $('#cameraId').val('');
+                    apiAddCamera(camName, function() {
+                        showCameraCards(cameraIds);
+                    });
+                } else {
+                    alert('Camera ID already exists!');
+                }
+            });
+        }
+
+        function apiAddCamera(camName, callback) {
+            $.ajax({
+                url: '/api/addcamera',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: camName
+                }),
+                success: function (response) {
+                    console.log('Success:', response);
+                    apiGetCameras(function() {
+                        if (callback) {
+                            callback();
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log('Error:', error);
+                }
+            });
+        }
+
+        function apiDeleteCamera(camName) {
+            $.ajax({
+                url: '/api/deletecamera',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: camName
+                }),
+                success: function (response) {
+                    console.log('Success:', response);
+                },
+                error: function (error) {
+                    console.log('Error:', error);
+                }
+            });
+        }
+
+        function apiGetCameras(callback) {
+            $.ajax({
+                url: '/api/getcameras',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    console.log('List of IDs:', response.available_cameras);
+                    cameraIds = response.available_cameras;
+                    if (callback) {
+                        callback();
+                    }
+                },
+                error: function (error) {
+                    console.log('Error:', error);
+                }
+            });
+        }
+
+        $(document).ready(function() {  
+            apiGetCameras();
+        });
+
+    </script>
 
 </body>
 </html>
