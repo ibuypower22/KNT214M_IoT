@@ -18,6 +18,21 @@
             color: rgba(28, 0, 54, 0.55);
         }
 
+        .facesOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .facesOverlay div {
+            position: absolute;
+            border: 2px solid red;
+            box-sizing: border-box;
+        }
+
         #cameraId {
             background-color:rgb(109, 41, 255);
             color: rgba(0, 0, 0, 0.5);
@@ -46,6 +61,7 @@
         }
 
         .cameraCard {
+            position: relative;
             display: inline-block;
             border: 0px solid rgba(0, 0, 0, 0.45);
             padding: 0px;
@@ -59,25 +75,25 @@
             margin-inline: 10px;
         }
 
-            .cameraCard .cameraImage {
-                height: auto;
-                width: 100%;
-                min-width: calc(49% - 10px);
-                min-height: 100%;
-                border-radius: 15px;
-            }
+        .cameraCard .cameraImage {
+            height: auto;
+            width: 100%;
+            min-width: calc(49% - 10px);
+            min-height: 100%;
+            border-radius: 15px;
+        }
 
-            .cameraCard span {
-                float: left;
-                margin: 0;
-                position: relative;
-                top: 40px;
-                left: 10px;
-                font-size: 1.5rem;
-                font-weight: 900;
-                color: rgba(255, 255, 255, 0.8);
-                text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.8);
-            }
+        .cameraCard span {
+            float: left;
+            margin: 0;
+            position: relative;
+            top: 40px;
+            left: 10px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.8);
+        }
 
         .controls {
             height: auto;
@@ -128,6 +144,17 @@
         }
 
         function startReload(imgElement, cameraName, facesElement, buttonElement) {
+            const facesOverlay = document.createElement('div');
+            facesOverlay.style.position = 'absolute';
+            facesOverlay.style.top = '0';
+            facesOverlay.style.left = '0';
+            facesOverlay.style.width = '100%';
+            facesOverlay.style.height = '100%';
+            facesOverlay.style.pointerEvents = 'none';
+            facesOverlay.style.zIndex = '10';
+            facesOverlay.className = 'facesOverlay';
+            imgElement.parentElement.appendChild(facesOverlay);
+
             if (buttonElement.isReloading) {
                 clearInterval(buttonElement.reloadInterval);
                 buttonElement.src = 'https://cdn-icons-png.flaticon.com/512/16104/16104951.png';
@@ -135,6 +162,8 @@
                 buttonElement.title = 'Reload camera';
                 buttonElement.isReloading = false;
                 imgElement.src = 'https://www.solidbackgrounds.com/images/1280x720/1280x720-royal-blue-traditional-solid-color-background.jpg';
+                facesOverlay.innerHTML = '';
+                facesElement.textContent = "\u00A0" + '-';
             } else {
                 buttonElement.src = 'https://cdn-icons-png.flaticon.com/512/14025/14025540.png';
                 buttonElement.alt = 'Stop';
@@ -152,12 +181,72 @@
 
                     const facesPositionsResponse = await fetch(`/api/getfaces/${cameraName}`);
                     
-                    if (facesPositionsResponse.ok) {
-                        const facesPositions = JSON.stringify((await facesPositionsResponse.json()));
-                        facesElement.textContent = " Faces found : " + facesPositions;
+                if (facesPositionsResponse.ok) {
+                    const facesPositions = await facesPositionsResponse.json();
+
+                    if (facesPositions.faces && facesPositions.faces.length > 0) {
+                        facesElement.textContent = "\u00A0" + "Faces found: " + facesPositions.faces.length;
+
+                        const facesOverlay = facesElement.parentElement.querySelector('.facesOverlay');
+                        if (facesOverlay) facesOverlay.innerHTML = '';
+
+                        const imgElementParent = facesElement.parentElement;
+                        let overlay = imgElementParent.querySelector('.facesOverlay');
+                        if (!overlay) {
+                            overlay = document.createElement('div');
+                            overlay.className = 'facesOverlay';
+                            overlay.style.position = 'absolute';
+                            overlay.style.top = '0';
+                            overlay.style.left = '0';
+                            overlay.style.width = '100%';
+                            overlay.style.height = '100%';
+                            overlay.style.pointerEvents = 'none';
+                            overlay.style.zIndex = '10';
+                            imgElementParent.appendChild(overlay);
+                        }
+
+                        facesPositions.faces.forEach(face => {
+                            const [top, right, bottom, left] = face;
+
+                            imgElement.onload = function () {
+                                const naturalWidth = imgElement.naturalWidth || imgElement.width;
+                                const naturalHeight = imgElement.naturalHeight || imgElement.height;
+
+                                const displayedWidth = imgElement.clientWidth;
+                                const displayedHeight = imgElement.clientHeight;
+
+                                const scaleX = displayedWidth / naturalWidth;
+                                const scaleY = displayedHeight / naturalHeight;
+
+                                const scaledTop = top * scaleY;
+                                const scaledLeft = left * scaleX;
+                                const scaledWidth = (right - left) * scaleX;
+                                const scaledHeight = (bottom - top) * scaleY;
+
+                                const faceBox = document.createElement('div');
+                                faceBox.style.position = 'absolute';
+                                faceBox.style.border = '2px solid red';
+                                faceBox.style.boxSizing = 'border-box';
+                                faceBox.style.top = `${scaledTop}px`;
+                                faceBox.style.left = `${scaledLeft}px`;
+                                faceBox.style.width = `${scaledWidth}px`;
+                                faceBox.style.height = `${scaledHeight}px`;
+
+                                overlay.appendChild(faceBox);
+                            };
+
+                            if (imgElement.complete) {
+                                imgElement.onload();
+                            }
+                        });
                     } else {
-                        facesElement.textContent = '-';
+                        facesElement.textContent = "\u00A0" + "No faces detected";
+                        const overlay = facesElement.parentElement.querySelector('.facesOverlay');
+                        if (overlay) overlay.remove();
                     }
+                } else {
+                    facesElement.textContent = "\u00A0" + '-';
+                }
                 }, 500);
                 buttonElement.isReloading = true;
             }
@@ -178,7 +267,7 @@
                 cameraImage.className = 'cameraImage';
 
                 const facesElement = document.createElement('span');
-                facesElement.textContent = '-';
+                facesElement.textContent = "\u00A0" + '-';
 
                 const cameraReloadButton = document.createElement('img');
                 cameraReloadButton.src = 'https://cdn-icons-png.flaticon.com/512/16104/16104951.png';
