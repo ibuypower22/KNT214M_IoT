@@ -34,7 +34,22 @@ class Program
             return;
         }
 
-        _webcam = new VideoCaptureDevice(videoDevices[0].MonikerString);
+        Console.WriteLine("Available webcams:");
+        for (int i = 0; i < videoDevices.Count; i++)
+        {
+            Console.WriteLine($"{i}: {videoDevices[i].Name}");
+        }
+
+        Console.WriteLine("Select a webcam by index: ");
+        if (!int.TryParse(Console.ReadLine(), out int selectedIndex) || selectedIndex < 0 || selectedIndex >= videoDevices.Count)
+        {
+            Console.WriteLine("Invalid selection.");
+            return;
+        }
+
+        Console.WriteLine("Webcam selected: " + videoDevices[selectedIndex].Name);
+
+        _webcam = new VideoCaptureDevice(videoDevices[selectedIndex].MonikerString);
         _webcam.NewFrame += new NewFrameEventHandler(OnNewFrame);
         _webcam.Start();
 
@@ -91,7 +106,7 @@ class Program
                 var response = await _httpClient.PostAsync(route, content);
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Image sent successfully.");
+                    Console.WriteLine("Image sent successfully");
                 }
                 else
                 {

@@ -12,3 +12,17 @@ D:\Projects\CameraEmulator\obj\Debug\CameraEmulator.csproj.CoreCompileInputs.cac
 D:\Projects\CameraEmulator\obj\Debug\CameraEm.24B319B5.Up2Date
 D:\Projects\CameraEmulator\obj\Debug\CameraEmulator.exe
 D:\Projects\CameraEmulator\obj\Debug\CameraEmulator.pdb
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\CameraEmulator.exe.config
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\CameraEmulator.exe
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\CameraEmulator.pdb
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\AForge.dll
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\AForge.Video.DirectShow.dll
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\AForge.Video.dll
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\AForge.xml
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\AForge.Video.xml
+D:\Projects\KNT214M_IoT\CameraEmulator\bin\Debug\AForge.Video.DirectShow.xml
+D:\Projects\KNT214M_IoT\CameraEmulator\obj\Debug\CameraEmulator.csproj.AssemblyReference.cache
+D:\Projects\KNT214M_IoT\CameraEmulator\obj\Debug\CameraEmulator.csproj.CoreCompileInputs.cache
+D:\Projects\KNT214M_IoT\CameraEmulator\obj\Debug\CameraEm.24B319B5.Up2Date
+D:\Projects\KNT214M_IoT\CameraEmulator\obj\Debug\CameraEmulator.exe
+D:\Projects\KNT214M_IoT\CameraEmulator\obj\Debug\CameraEmulator.pdb
