@@ -127,7 +127,7 @@
             });
         }
 
-        function startReload(imgElement, cameraName, facesCountElement, buttonElement) {
+        function startReload(imgElement, cameraName, facesElement, buttonElement) {
             if (buttonElement.isReloading) {
                 clearInterval(buttonElement.reloadInterval);
                 buttonElement.src = 'https://cdn-icons-png.flaticon.com/512/16104/16104951.png';
@@ -150,13 +150,13 @@
                         imgElement.src = 'https://i.ytimg.com/vi/_Yvt99hHCxM/maxresdefault.jpg';
                     }
 
-                    const facesCountResponse = await fetch(`/api/getfacescount/${cameraName}`);
+                    const facesPositionsResponse = await fetch(`/api/getfaces/${cameraName}`);
                     
-                    if (facesCountResponse.ok) {
-                        const facesCount = (await facesCountResponse.json()).faces_count;
-                        facesCountElement.textContent = " Faces found : "+facesCount;
+                    if (facesPositionsResponse.ok) {
+                        const facesPositions = JSON.stringify((await facesPositionsResponse.json()));
+                        facesElement.textContent = " Faces found : " + facesPositions;
                     } else {
-                        facesCountElement.textContent = '-';
+                        facesElement.textContent = '-';
                     }
                 }, 500);
                 buttonElement.isReloading = true;
@@ -177,8 +177,8 @@
                 cameraImage.alt = 'Camera Output';
                 cameraImage.className = 'cameraImage';
 
-                const facesCountElement = document.createElement('span');
-                facesCountElement.textContent = '-';
+                const facesElement = document.createElement('span');
+                facesElement.textContent = '-';
 
                 const cameraReloadButton = document.createElement('img');
                 cameraReloadButton.src = 'https://cdn-icons-png.flaticon.com/512/16104/16104951.png';
@@ -187,7 +187,7 @@
                 cameraReloadButton.isReloading = false;
                 cameraReloadButton.className = 'controls';
                 cameraReloadButton.onclick = function () {
-                    startReload(cameraImage, camName, facesCountElement, cameraReloadButton);
+                    startReload(cameraImage, camName, facesElement, cameraReloadButton);
                 };
 
                 const cameraDeleteButton = document.createElement('img');
@@ -201,7 +201,7 @@
                 };
 
                 cameraCard.appendChild(cameraName);
-                cameraCard.appendChild(facesCountElement);
+                cameraCard.appendChild(facesElement);
                 cameraCard.appendChild(cameraDeleteButton);
                 cameraCard.appendChild(cameraReloadButton);
                 cameraCard.appendChild(cameraImage);

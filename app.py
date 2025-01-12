@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory, send_file, Response
 import os
-from recognition import get_faces_count
+from recognition import get_faces_positions
 
 app = Flask(__name__)
 
@@ -14,8 +14,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Set to store available camera IDs
 camera_ids = set()
 
-# Dictionary to store face counts for each camera
-faces_count = dict()
+# Dictionary to store faces' positions for each camera
+faces_positions = dict()
 
 # Index static file
 @app.route('/')
@@ -82,7 +82,7 @@ def add_image(id: str):
     image.save(image_path)
 
     # Get face count synchronously
-    faces_count[id] = get_faces_count(image_path)
+    faces_positions[id] = get_faces_positions(image_path)
     
     # Return 200 OK with no content
     return Response(status=200)
@@ -99,15 +99,15 @@ def get_image(id: str):
     else:
         return jsonify({"status": "Error", "message": "Image not found"}), 404
 
-@app.route('/api/getfacescount/<string:id>', methods=['GET'])
-def get_facescount(id: str):
+@app.route('/api/getfaces/<string:id>', methods=['GET'])
+def get_faces(id: str):
     if id not in camera_ids:
         return jsonify({"status": "Error", "message": "Camera ID not recognized"}), 404
     
-    if id not in faces_count:
+    if id not in faces_positions:
         return jsonify({"status": "Error", "message": "Faces count not available"}), 404
     
-    return jsonify({"faces_count": faces_count[id]}), 200
+    return jsonify({"faces": faces_positions[id]}), 200
 
 
 if __name__ == '__main__':
