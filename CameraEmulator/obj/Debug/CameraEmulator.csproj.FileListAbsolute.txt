@@ -1,0 +1,14 @@
+D:\Projects\CameraEmulator\bin\Debug\CameraEmulator.exe.config
+D:\Projects\CameraEmulator\bin\Debug\CameraEmulator.exe
+D:\Projects\CameraEmulator\bin\Debug\CameraEmulator.pdb
+D:\Projects\CameraEmulator\bin\Debug\AForge.dll
+D:\Projects\CameraEmulator\bin\Debug\AForge.Video.DirectShow.dll
+D:\Projects\CameraEmulator\bin\Debug\AForge.Video.dll
+D:\Projects\CameraEmulator\bin\Debug\AForge.xml
+D:\Projects\CameraEmulator\bin\Debug\AForge.Video.xml
+D:\Projects\CameraEmulator\bin\Debug\AForge.Video.DirectShow.xml
+D:\Projects\CameraEmulator\obj\Debug\CameraEmulator.csproj.AssemblyReference.cache
+D:\Projects\CameraEmulator\obj\Debug\CameraEmulator.csproj.CoreCompileInputs.cache
+D:\Projects\CameraEmulator\obj\Debug\CameraEm.24B319B5.Up2Date
+D:\Projects\CameraEmulator\obj\Debug\CameraEmulator.exe
+D:\Projects\CameraEmulator\obj\Debug\CameraEmulator.pdb
